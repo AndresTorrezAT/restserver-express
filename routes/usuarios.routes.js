@@ -4,15 +4,21 @@ const { check } = require('express-validator');
 
 
 const { validarCampos } = require('../middlewares/validar-campos');
+const { validarJWT } = require('../middlewares/validar-jwt');
+
+
 const { esRoleValido,
         emailExiste,
         existeUsuarioPorId } = require('../helpers/db-validators');
 
+        
 const { usuariosGet,
         usuariosPost,
         usuariosPut,
         usuariosPatch,
         usuariosDelete } = require('../controllers/usuarios.controller');
+
+
 
 
 const router = Router();
@@ -37,6 +43,7 @@ router.put('/:id',[
 ], usuariosPut ); // expres parsea y configura el :id y icluso te lo da de variable
 
 router.delete('/:id',[
+    validarJWT,
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),
     validarCampos
