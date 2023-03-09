@@ -7,46 +7,47 @@ const { crearCategoria, obtenerCategorias, obtenerCategoria, actualizarCategoria
 const { existeCategoriaPorId } = require('../helpers/db-validators');
 
 
-
 const router = Router();
 
-// {{url}}/api/categorias
 
 
+//TODO: CREAR - con token - privado
+router.post('/', [
+    validarJWT ,
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    validarCampos
+   ], crearProducto );
 
-// Obtener todas las categorias - publico
-router.get('/', obtenerCategorias);
 
-// Obtener una categoria por id - publico
+//TODO: OBTENER - todas - publico
+router.get('/', obtenerProductos);
+
+
+//TODO: OBTENER - por id - publico
 router.get('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeCategoriaPorId ),
     validarCampos,
-], obtenerCategoria );
+], obtenerProducto );
 
-// Crear categoria - privado - cualquier persona con un token valido
-router.post('/', [
-     validarJWT ,
-     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-     validarCampos
-    ], crearCategoria );
 
-// Actualizar - privado -cualquier con token valido
+//TODO: ACTUALIZAR - tener token - privado
 router.put('/:id', [
     validarJWT,
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('id').custom( existeCategoriaPorId ),
     validarCampos
-], actualizarCategoria);
+], actualizarProducto);
 
-// Borrar una categoria - Admin
+
+//TODO: BORRAR - ser admin -  privado
 router.delete('/:id', [
     validarJWT,
     esAdminRole,
     check('id', 'No es un ID de Mongo válido').isMongoId(),
     check('id').custom( existeCategoriaPorId ),
     validarCampos
-], borrarCategoria );
+], borrarProducto );
 
 
 module.exports = router;
