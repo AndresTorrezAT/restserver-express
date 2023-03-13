@@ -3,8 +3,13 @@ const { check } = require('express-validator');
 
 const { validarJWT, validarCampos, esAdminRole } = require('../middlewares');
 
-const { crearCategoria, obtenerCategorias, obtenerCategoria, actualizarCategoria, borrarCategoria } = require('../controllers/categorias.controller');
-const { existeCategoriaPorId } = require('../helpers/db-validators');
+const { crearProducto, 
+        obtenerProductos, 
+        obtenerProducto, 
+        actualizarProducto, 
+        borrarProducto } = require('../controllers/productos.controller');
+
+const { existeCategoriaPorId, existeProductoPorId } = require('../helpers/db-validators');
 
 
 const router = Router();
@@ -13,8 +18,10 @@ const router = Router();
 
 //TODO: CREAR - con token - privado
 router.post('/', [
-    validarJWT ,
+    validarJWT,
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    check('categoria', 'No es in ID de mongo').isMongoId(),
+    check('categoria').custom( existeCategoriaPorId ),
     validarCampos
    ], crearProducto );
 
@@ -25,8 +32,8 @@ router.get('/', obtenerProductos);
 
 //TODO: OBTENER - por id - publico
 router.get('/:id', [
-    check('id', 'No es un ID válido').isMongoId(),
-    check('id').custom( existeCategoriaPorId ),
+    check('id', 'No es un ID de Mongo válido').isMongoId(),
+    check('id').custom( existeProductoPorId ),
     validarCampos,
 ], obtenerProducto );
 
@@ -34,10 +41,10 @@ router.get('/:id', [
 //TODO: ACTUALIZAR - tener token - privado
 router.put('/:id', [
     validarJWT,
-    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-    check('id').custom( existeCategoriaPorId ),
+    // check('categoria', 'No es in ID de mongo').isMongoId(),
+    check('id').custom( existeProductoPorId ),
     validarCampos
-], actualizarProducto);
+], actualizarProducto );
 
 
 //TODO: BORRAR - ser admin -  privado
@@ -45,7 +52,7 @@ router.delete('/:id', [
     validarJWT,
     esAdminRole,
     check('id', 'No es un ID de Mongo válido').isMongoId(),
-    check('id').custom( existeCategoriaPorId ),
+    check('id').custom( existeProductoPorId ),
     validarCampos
 ], borrarProducto );
 
